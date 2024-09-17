@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block extra_head %}
+
+<script src="https://cdn.tailwindcss.com"></script>
+{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+ 
+  <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">Add Recipe</h2>
+    <form>
+      <div class="mb-4">
+        <label for="exampleInputRecipe1" class="block text-gray-700 text-sm font-bold mb-2">Recipe</label>
+        <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="exampleInputRecipe1" placeholder="Enter Recipe">
+      </div>
+      
+      <div class="mb-4">
+        <label for="exampleInputRecipeDescription1" class="block text-gray-700 text-sm font-bold mb-2">Recipe Description</label>
+        <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="exampleInputRecipeDescription1" placeholder="Enter Description">
+      </div>
+      
+      <div class="mb-4">
+        <label for="exampleInputUserID" class="block text-gray-700 text-sm font-bold mb-2">User ID</label>
+        <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="exampleInputUserID" placeholder="Enter User ID">
+      </div>
+      
+      <div class="flex items-center justify-between">
+        <button type="button" onclick="submitForm()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          Submit
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="flex justify-center mt-6">
+  <button type="button" id="btn1" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+    Show Recipes
+  </button>
+</div>
+
+<div class="container mx-auto mt-8">
+  <div class="overflow-x-auto">
+    <table id="recipeTable" class="table-auto w-full bg-white shadow-lg rounded-lg">
+      <thead class="bg-gray-200">
+        <tr>
+          <th class="px-4 py-2">Recipe Name</th>
+          <th class="px-4 py-2">Description</th>
+          <th class="px-4 py-2">User</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.getElementById('btn1').addEventListener('click', () => {
+    fetch("{% url 'show_recipe' %}")
+    .then(response => response.json())
+    .then(data => {
+      const tableBody = document.querySelector('#recipeTable tbody');
+      tableBody.innerHTML = ''; 
+
+      data.forEach(recipe => {
+        const row = document.createElement('tr');
+
+        let recipe_name = document.createElement('td');
+        recipe_name.textContent = recipe.name;
+        row.appendChild(recipe_name);
+
+        let recipe_desc = document.createElement('td');
+        recipe_desc.textContent = recipe.description;
+        row.appendChild(recipe_desc);
+
+        let user_name = document.createElement('td');
+        user_name.textContent = recipe.user;
+        row.appendChild(user_name);
+
+        tableBody.appendChild(row);
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching values: ' + error);
+    });
+  });
+
+  function submitForm() {
+    const Recipename = document.getElementById('exampleInputRecipe1').value;
+    const RecipeDescription = document.getElementById('exampleInputRecipeDescription1').value;
+    const UserID = document.getElementById('exampleInputUserID').value;
+
+    const formData = {
+      name: Recipename,
+      description: RecipeDescription,
+      user_id: UserID
+    };
+
+    fetch("{% url 'create_recipe' %}", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        alert('Recipe created successfully');
+      } else {
+        alert('Error: ' + (data.error));
+      }
+    });
+  }
+</script>
+{% endblock %}

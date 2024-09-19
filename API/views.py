@@ -24,7 +24,7 @@ def recipe_handle(request):
              
             user = User.objects.get(id = user_id)
 
-            recipe = models.Recipe.objects.create(recipe_name = data.get('name'),recipe_description = data.get('decription'), user=user)
+            recipe = models.Recipe.objects.create(recipe_name = data.get('name'),recipe_description = data.get('description'), user=user)
             
             return JsonResponse({'status':'success','recipe_id': recipe.id},status=201)
         except User.DoesNotExist:

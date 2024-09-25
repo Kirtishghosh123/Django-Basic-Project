@@ -108,7 +108,7 @@
     })
     .then(response => response.json())
     .then(data => {
-      if (data.status === 'success') {
+      if (data.status === 201) {
         alert('Recipe created successfully');
       } else {
         alert('Error: ' + (data.error));

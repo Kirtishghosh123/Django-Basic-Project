@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+ 
+    <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">User Login</h2>
+      <form onsubmit="submitForm(event)"> 
+      
+        <div class="mb-4">
+          <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Username</label>
+          <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="id_username" placeholder="Enter Username">
+        </div>
+        
+        <div class="mb-4">
+          <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+          <input type="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="id_password" placeholder="Enter Password">
+        </div>
+    
+        <div class="flex items-center justify-between">
+          <button type="submit"   class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            Login
+          </button>
+        </div>
+      </form>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function getCSRFToken() {
+    const cookieValue = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('csrftoken='))
+        ?.split('=')[1];
+    return cookieValue || '';
+}
+    function submitForm(event){
+        event.preventDefault();
+
+        const username = document.getElementById('id_username').value;
+        const password = document.getElementById('id_password').value;
+        const accessToken = localStorage.getItem(`${username}_access_token`);
+        const refreshToken = localStorage.getItem(`${username}_refresh_token`);
+        const csrfToken = getCSRFToken()
+        console.log('Access Token from LocalStorage:', accessToken);
+        console.log(username)
+        console.log(password)
+        
+        formData  = {
+            username: username,
+            password: password
+        }
+
+        fetch("{% url 'login' %}",{  
+            method: "POST",
+                headers:{
+                    'Authorization': 'Bearer ' + accessToken,
+                    'Content-Type': 'application/json',
+                },
+                body:JSON.stringify(formData)
+        }).then(response=> {
+            if(response.ok){
+              return response.json()
+            }
+            else{
+              return response.json().then(data=>{
+                throw new Error(data.message)
+              })
+              
+            }
+        })
+        .then(data => {
+            if(data.status == 'success'){
+                   
+                   window.location.href('/templates/home.html')
+          
+            }
+            else{
+                console.log(data.status)
+                alert('Login Failed'+" "+  data.message);
+            }
+        }).catch(error=>{
+            console.error('Error:'+ error);
+        })
+
+    }
+</script>
+    
+    {% endblock %}

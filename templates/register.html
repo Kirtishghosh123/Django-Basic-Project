@@ -1,0 +1,80 @@
+
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block extra_head %}
+<script src="https://cdn.tailwindcss.com"></script>
+{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+ 
+  <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">User Registration</h2>
+    <form onsubmit="submitForm(event)"> 
+      <div class="mb-4">
+        <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Username</label>
+        <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="id_username" placeholder="Enter Username">
+      </div>
+      
+      <div class="mb-4">
+        <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+        <input type="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="id_password" placeholder="Enter Password">
+      </div>
+      
+      
+      
+      <div class="flex items-center justify-between">
+        <button type="submit"  class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          Submit
+        </button>
+      </div>
+    </form>
+  </div>
+  <!-- <div class="homepage">
+  <button onclick="loginPage()" id="btn">Login</button>
+</div> -->
+  
+</div>
+
+  {% endblock %}
+
+  {% block extra_js %}
+     <script>
+      function submitForm(event) {
+        event.preventDefault()
+        const username = document.getElementById('id_username').value;
+        const password = document.getElementById('id_password').value;
+        
+        const formData ={
+          username: username,
+          password: password
+        };
+        console.log(formData)
+        fetch("{% url 'register-user' %}",{
+          method: "POST",
+          headers:{
+            
+            'Content-Type':'application/json',
+          },
+          body:JSON.stringify(formData)
+        }).then(response => response.json()).then(data => {
+          if(data.status == 'success'){
+            console.log(data.access)
+            console.log(data.refresh)
+            localStorage.setItem(`${data.username}_access_token`,data.access);
+            localStorage.setItem(`${data.username}_refresh`,data.refresh);
+            alert('User Created successfully');
+          }else{
+            alert('Error from else: ' + (data.error));
+          }
+        }).catch(
+          error =>{
+            alert('Error from catch' + error.message);
+          }
+        )
+
+      }
+
+     
+     </script>
+    {% endblock %}

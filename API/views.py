@@ -24,7 +24,7 @@ class Login(APIView):
    
 class Homeview(View):
     permission_classes = [AllowAny]
-    
+
     def get(self,request):
         return render(request,'home.html')
     

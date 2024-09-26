@@ -63,7 +63,7 @@
             console.log(data.refresh)
             localStorage.setItem(`${data.username}_access_token`,data.access);
             localStorage.setItem(`${data.username}_refresh`,data.refresh);
-            alert('User Created successfully');
+            window.location.assign('/login');
           }else{
             alert('Error from else: ' + (data.error));
           }

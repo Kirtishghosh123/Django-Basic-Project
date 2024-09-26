@@ -36,6 +36,7 @@
     return cookieValue || '';
 }
     function submitForm(event){
+      
         event.preventDefault();
 
         const username = document.getElementById('id_username').value;
@@ -61,6 +62,7 @@
                 body:JSON.stringify(formData)
         }).then(response=> {
             if(response.ok){
+
               return response.json()
             }
             else{
@@ -69,11 +71,10 @@
               })
               
             }
-        })
-        .then(data => {
+        }).then(data => {
             if(data.status == 'success'){
-                   
-                   window.location.href('/templates/home.html')
+              alert('User logged successfully');
+              window.location.assign('/home');
           
             }
             else{

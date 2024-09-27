@@ -40,7 +40,7 @@ class Recipe(APIView):
 
                     user_id = data.get('user_id')
                     
-                    user = User.objects.get(id = user_id)
+                    user = User.objects.get(username = user_id)
 
                     recipe = models.Recipe.objects.create(recipe_name = data.get('name'),recipe_description = data.get('description'), user=user)
                     
